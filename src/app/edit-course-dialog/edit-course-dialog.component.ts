@@ -4,9 +4,11 @@ import {Course} from "../models/course.model";
 import {EditCourseDialogData} from "./edit-course-dialog.data.model";
 import {CoursesService} from "../services/courses.service";
 import {LoadingIndicatorComponent} from "../loading/loading.component";
-import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
+import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CourseCategoryComboboxComponent} from "../course-category-combobox/course-category-combobox.component";
 import {CourseCategory} from "../models/course-category.model";
+import {firstValueFrom} from "rxjs";
+import {MessagesService} from "../messages/messages.service";
 
 @Component({
   selector: 'edit-course-dialog',
@@ -21,5 +23,90 @@ import {CourseCategory} from "../models/course-category.model";
 })
 export class EditCourseDialogComponent {
 
+  dialogRef = inject(MatDialogRef);
+  messageService = inject(MessagesService);
+  data: EditCourseDialogData = inject(MAT_DIALOG_DATA);
+  coursesService = inject(CoursesService);
+  fb = inject(FormBuilder);
 
+  form = this.fb.group({
+    title: [''],
+    longDescription: [''],
+    iconUrl: [''],
+  });
+
+  category = signal<CourseCategory>("BEGINNER");
+
+  constructor() {
+    this.category.set(this.data?.course?.category ?? "BEGINNER");
+    this.form.patchValue({
+      title: this.data.course?.title,
+      longDescription: this.data.course?.longDescription,
+      iconUrl: this.data.course?.iconUrl,
+    })
+    effect(() => {
+      console.log(`Category bi-directional binding:
+      ${this.category()}`)
+    });
+  }
+
+  protected onClose() {
+    this.dialogRef.close();
+  }
+
+  protected async onSave() {
+
+    const courseProps =
+      this.form.value as Partial<Course>;
+
+    courseProps.category = this.category();
+
+    if (this.data.mode === "update") {
+      await this.saveCourse(this.data.course!.id, courseProps)
+    } else if (this.data.mode === "create") {
+      await this.createCourse(courseProps);
+    }
+  }
+
+  async createCourse(course: Partial<Course>) {
+    try {
+      const createdCourse =
+        await this.coursesService.createCourse(course);
+      this.dialogRef.close(createdCourse);
+    } catch (err) {
+      this.messageService.showMessage(
+        `Error creating course!`,
+        "error"
+      );
+      console.error(err);
+    }
+  }
+
+  async saveCourse(courseId: string, changes: Partial<Course>) {
+    try {
+      const updatedCourse =
+        await this.coursesService.saveCourse(courseId, changes);
+      this.dialogRef.close(updatedCourse);
+    } catch (err) {
+      this.messageService.showMessage(
+        `Error saving courses!`,
+        "error"
+      );
+      console.error(err);
+    }
+  }
+}
+
+export async function openEditCourseDialog(
+  dialog: MatDialog,
+  data: EditCourseDialogData
+) {
+  const config = new MatDialogConfig();
+  config.disableClose = true;
+  config.autoFocus = true;
+  config.width = "400px";
+  config.data = data;
+  const close$ = dialog.open(EditCourseDialogComponent, config)
+    .afterClosed();
+  return firstValueFrom(close$);
 }

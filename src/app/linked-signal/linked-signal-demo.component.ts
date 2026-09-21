@@ -39,7 +39,6 @@ export class LinkedSignalDemoComponent {
 
   onArticleAdded() {
     alert(`${this.quantity()} licenses added for ${this.selectedCourse()}`)
-
   }
 
   onCourseSelected(courseCode: string) {
