@@ -19,8 +19,14 @@
 
   <course-category-combobox
     label="Course category"
-    [(value)]="category"
-  />
+    [(value)]="category">
+    <div class="title" #title>
+      Course category (via content projection)
+    </div>
+    <div class="title" #title>
+      Another title (via content projection)
+    </div>
+  </course-category-combobox>
 
   <div class="form-control">
     <label>Course image:</label>

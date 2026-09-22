@@ -10,23 +10,28 @@
 
     <mat-tab label="Beginners">
       <courses-card-list
+        #beginnersList
+        matTooltip="These are the beginner courses"
         (courseUpdated)="onCourseUpdated($event)"
         (courseDeleted)="onCourseDeleted($event)"
-        [courses]="beginnerCourses()"/>
+        [courses]="beginnerCourses()"
+      />
     </mat-tab>
 
     <mat-tab label="Intermediate">
       <courses-card-list
         (courseUpdated)="onCourseUpdated($event)"
         (courseDeleted)="onCourseDeleted($event)"
-        [courses]="intermediateCourses()"/>
+        [courses]="intermediateCourses()"
+      />
     </mat-tab>
 
     <mat-tab label="Advanced">
       <courses-card-list
         (courseUpdated)="onCourseUpdated($event)"
         (courseDeleted)="onCourseDeleted($event)"
-        [courses]="advancedCourses()"/>
+        [courses]="advancedCourses()"
+      />
     </mat-tab>
 
   </mat-tab-group>

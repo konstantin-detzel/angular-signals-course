@@ -1,4 +1,4 @@
-import {Component, inject, input, output} from '@angular/core';
+import {Component, effect, ElementRef, inject, input, output, viewChildren} from '@angular/core';
 import {RouterLink} from "@angular/router";
 import {Course} from "../models/course.model";
 import {MatDialog} from "@angular/material/dialog";
@@ -20,6 +20,14 @@ export class CoursesCardListComponent {
   courseUpdated = output<Course>();
   courseDeleted = output<string>();
   dialog = inject(MatDialog);
+
+  courseCards = viewChildren('courseCards');
+
+  constructor() {
+    effect(() => {
+      console.log(this.courseCards());
+    })
+  }
 
   protected async onEditCourse(course: Course) {
     const newCourse = await openEditCourseDialog(this.dialog, {

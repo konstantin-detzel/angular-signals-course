@@ -13,7 +13,33 @@ import {LessonDetailComponent} from "./lesson-detail/lesson-detail.component";
 })
 export class LessonsComponent {
 
+  mode = signal<'master' | 'detail'>('master');
+  lessons = signal<Lesson[]>([]);
+  selectedLesson = signal<Lesson | null>(null);
+  lessonsService = inject(LessonsService);
 
+  searchInput = viewChild.required<ElementRef>('search');
 
+  protected async onSearch() {
+    const query = this.searchInput()?.nativeElement.value;
+    console.log('search query', query);
+    const result =
+      await this.lessonsService.loadLessons({query});
+    this.lessons.set(result);
+  }
 
+  protected onLessonSelected(lesson: Lesson) {
+    this.mode.set('detail');
+    this.selectedLesson.set(lesson);
+  }
+
+  protected onCancel() {
+    this.mode.set('master');
+  }
+
+  protected onLessonUpdated(updatedLesson: Lesson) {
+   this.lessons.update(lessons =>
+     lessons.map(l => l.id === updatedLesson.id ? updatedLesson : l)
+   )
+  }
 }

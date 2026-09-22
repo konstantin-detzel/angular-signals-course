@@ -25,7 +25,7 @@ export class AppComponent {
 
   isLoggedIn = this.authService.isLoggedIn;
 
-  protected onLogout() {
-    this.authService.logout();
+  protected async onLogout() {
+    await this.authService.logout();
   }
 }

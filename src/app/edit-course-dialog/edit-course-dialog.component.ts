@@ -38,12 +38,12 @@ export class EditCourseDialogComponent {
   category = signal<CourseCategory>("BEGINNER");
 
   constructor() {
-    this.category.set(this.data?.course?.category ?? "BEGINNER");
     this.form.patchValue({
       title: this.data.course?.title,
       longDescription: this.data.course?.longDescription,
       iconUrl: this.data.course?.iconUrl,
     })
+    this.category.set(this.data?.course?.category ?? "BEGINNER");
     effect(() => {
       console.log(`Category bi-directional binding:
       ${this.category()}`)
