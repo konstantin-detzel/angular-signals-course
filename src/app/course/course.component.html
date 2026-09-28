@@ -1,4 +1,13 @@
 <div class="course-container">
+  <div class="bug-demo-nav">
+    <strong>Jump to another course (SPA navigation, no reload):</strong>
+    <a [routerLink]="['/courses', '1']">Course 1</a>
+    <a [routerLink]="['/courses', '2']">Course 2</a>
+    <a [routerLink]="['/courses', '3']">Course 3</a>
+    <p>Route param right now: {{courseId()}}</p>
+    <p>Signal value right now: {{course()?.id}} - {{course()?.title}}</p>
+  </div>
+
   <div class="course-header">
     <h1>{{course()?.title}}</h1>
     <img class="course-image" [src]="course()?.iconUrl" alt="course image">
